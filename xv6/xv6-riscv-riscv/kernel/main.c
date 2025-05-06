@@ -3,7 +3,8 @@
 #include "memlayout.h"
 #include "riscv.h"
 #include "defs.h"
-
+#include "petersonlock.h"
+extern struct peterson_lock peterson_locks[NLOCKS];
 volatile static int started = 0;
 
 // start() jumps here in supervisor mode on all CPUs.
@@ -20,6 +21,12 @@ main()
     kvminit();       // create kernel page table
     kvminithart();   // turn on paging
     procinit();      // process table
+    for (int i = 0; i < NLOCKS; i++) {
+      peterson_locks[i].flags[0] = 0;
+      peterson_locks[i].flags[1] = 0;
+      peterson_locks[i].turn = 0;
+      peterson_locks[i].active = 0;
+    }
     trapinit();      // trap vectors
     trapinithart();  // install kernel trap vector
     plicinit();      // set up interrupt controller

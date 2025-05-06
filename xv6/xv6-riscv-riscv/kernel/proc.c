@@ -5,6 +5,7 @@
 #include "spinlock.h"
 #include "proc.h"
 #include "defs.h"
+#include "petersonlock.h"
 
 struct cpu cpus[NCPU];
 
@@ -14,6 +15,7 @@ struct proc *initproc;
 
 int nextpid = 1;
 struct spinlock pid_lock;
+struct peterson_lock peterson_locks[NLOCKS];
 
 extern void forkret(void);
 static void freeproc(struct proc *p);
